@@ -72,18 +72,6 @@ function App() {
       {/* API response display */}
       {uvData && (
         <div className="API-response">
-          {/**style={{
-            position: "absolute",
-            top: 130,
-            left: 10,
-            background: "white",
-            padding: 10,
-            zIndex: 1000,
-            maxWidth: 300,
-            overflowY: "auto",
-            maxHeight: "60vh",
-          }}
-        >**/}
           <h4>UV Data:</h4>
           <p><strong>UV Index:</strong> {uvData.uv}</p>
           <p><strong>Max UV:</strong> {uvData.uv_max} at {new Date(uvData.uv_max_time).toLocaleTimeString()}</p>
