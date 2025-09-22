@@ -75,6 +75,6 @@ Displays current UV index, maximum UV for the day, ozone levels, and sun positio
 Flask securely fetches data from OpenUV, keeping the API key hidden.
 
 
-### Design Decisions
+## Design Decisions
 
 This project was designed with simplicity and user experience in mind, making sure that it serves it's purpose while also giving the user a simple experience. The frontend provides two intuitive ways of selecting a location: direct map interaction with the help of Leaflet.js and manual coordinate entry. To ensure security, the API key is never exposed in the frontend; instead, the Flask backend acts as a proxy to the OpenUV API. React Leaflet was chosen for its lightweight integration with Leaflet.js and ease of handling map events, while Flask was selected for its minimal setup and flexibility as a backend service. The architecture cleanly separates responsibilities: React handles the user interface, while Flask manages API communication.
