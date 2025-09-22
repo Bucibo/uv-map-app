@@ -33,6 +33,7 @@ function SetMapCenter({ coords }) {
   return null;
 }
 
+
 function App() {
   const [coords, setCoords] = useState(null);
   const [uvData, setUvData] = useState(null);
@@ -45,17 +46,28 @@ function App() {
       const res = await fetch(`http://localhost:5000/uv?lat=${lat}&lng=${lng}`);
       const data = await res.json();
       setUvData(data.result);
+      console.log(data);
     } catch (err) {
       console.error("Error fetching UV data", err);
       alert("Failed to fetch UV data. Please try again.");
     }
   };
 
-  // Handle map clicks
-  const handleClick = (lat, lng) => {
-    setCoords({ lat, lng });
-    fetchUvData(lat, lng);
-  };
+  // Helper function to check if coordinates are valid
+const isValidCoordinates = (lat, lng) => {
+  return lat >= -90 && lat <= 90 && lng >= -180 && lng <= 180;
+};
+
+
+// Handle map clicks
+const handleClick = (lat, lng) => {
+  if (!isValidCoordinates(lat, lng)) {
+    alert("Invalid coordinates! Latitude must be -90 to 90, Longitude must be -180 to 180.");
+    return;
+  }
+  setCoords({ lat, lng });
+  fetchUvData(lat, lng);
+};
 
   // Handle coordinate search
   const handleSearch = (e) => {
