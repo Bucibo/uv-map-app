@@ -59,3 +59,24 @@
   padding: 10px;
   z-index: 1000;
 }
+
+.API-response {
+  position: absolute;
+  top: 130px;
+  left: 10px;
+  background: white;
+  padding: 10px;
+  z-index: 1000;
+  max-width: 300px;
+  overflow-y: auto;
+  max-height: 60vh;
+}
+
+.API-response h4 {
+  margin-top: 0;
+  margin-bottom: 8px;
+}
+
+.API-response p {
+  margin: 4px 0;
+}
