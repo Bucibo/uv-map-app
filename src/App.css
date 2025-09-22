@@ -36,3 +36,26 @@
     transform: rotate(360deg);
   }
 }
+
+/* Map container styling */
+.map-container {
+  position: relative;
+  height: 100vh;
+  width: 100vw;
+}
+
+/* Leaflet map takes full container space */
+.leaflet-map {
+  height: 100%;
+  width: 100%;
+}
+
+/* Coordinates display box */
+.coords-display {
+  position: absolute;
+  top: 60px;
+  left: 10px;
+  background: white;
+  padding: 10px;
+  z-index: 1000;
+}
