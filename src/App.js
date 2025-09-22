@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { MapContainer, TileLayer, useMapEvents, Marker, Popup } from "react-leaflet";
+import { MapContainer, TileLayer, useMapEvents, Marker, Popup, useMap } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import "./App.css";
 import L from "leaflet";
@@ -25,9 +25,18 @@ L.Icon.Default.mergeOptions({
     return null;
   }
 
+// Helper component to programmatically move map to new coords
+function SetMapCenter({ coords }) {
+  const map = useMap();
+  if (coords) map.setView([coords.lat, coords.lng], 6);
+  return null;
+}
+
 function App() {
   const [coords, setCoords] = useState(null);
   const [uvData, setUvData] = useState(null);
+  const [latInput, setLatInput] = useState("");
+  const [lngInput, setLngInput] = useState("");
 
   const fetchUvData = async (lat, lng) => {
     try {
@@ -46,14 +55,47 @@ function App() {
     console.log(`Latitude: ${lat} and ${lng}`);
   };
 
+    const handleSearch = (e) => {
+    e.preventDefault();
+    const lat = parseFloat(latInput);
+    const lng = parseFloat(lngInput);
+    if (!isNaN(lat) && !isNaN(lng)) {
+      handleClick(lat, lng);
+      setLatInput("");
+      setLngInput("");
+    } else {
+      alert("Please enter valid numbers for latitude and longitude.");
+    }
+  };
+
   return (
     <div className="map-container">
-      <MapContainer center={[0, 0]} zoom={2} className="leaflet-map">
+      {/* Search Bar */}
+      <form className="coordinates-form" onClick={handleSearch}>
+ <input
+          type="text"
+          placeholder="Latitude"
+          value={latInput}
+          onChange={(e) => setLatInput(e.target.value)}
+          style={{ width: "80px" }}
+        />
+        <input
+          type="text"
+          placeholder="Longitude"
+          value={lngInput}
+          onChange={(e) => setLngInput(e.target.value)}
+          style={{ width: "80px" }}
+        />
+        <button type="submit">Search</button>
+      </form>
+
+      <MapContainer center={[-28.6135, 24.1260]} zoom={6} className="leaflet-map">
         <TileLayer
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
           attribution="&copy; OpenStreetMap contributors"
         />
         <LocationMarker onClick={handleClick} />
+        {coords && <SetMapCenter coords={coords} />}
         {coords && (
           <Marker position={[coords.lat, coords.lng]}>
             <Popup>
