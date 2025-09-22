@@ -58,7 +58,7 @@
   background: white;
   padding: 10px;
   z-index: 1000;
-  margin-top: 20px;
+  margin-top: 50px;
 }
 
 .API-response {
@@ -71,7 +71,7 @@
   max-width: 300px;
   overflow-y: auto;
   max-height: 60vh;
-  margin-top: 20px;
+  margin-top: 30px;
 }
 
 .API-response h4 {

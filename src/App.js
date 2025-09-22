@@ -15,17 +15,18 @@ L.Icon.Default.mergeOptions({
   shadowUrl,
 });
 
-  function LocationMarker({ onClick }) {
-    useMapEvents({
-      click(e) {
-        const { lat, lng } = e.latlng;
-        onClick(lat, lng);
-      },
-    });
-    return null;
-  }
+// Component to handle map clicks
+function LocationMarker({ onClick }) {
+  useMapEvents({
+    click(e) {
+      const { lat, lng } = e.latlng;
+      onClick(lat, lng);
+    },
+  });
+  return null;
+}
 
-// Helper component to programmatically move map to new coords
+// Component to recenter map programmatically
 function SetMapCenter({ coords }) {
   const map = useMap();
   if (coords) map.setView([coords.lat, coords.lng], 6);
@@ -38,24 +39,26 @@ function App() {
   const [latInput, setLatInput] = useState("");
   const [lngInput, setLngInput] = useState("");
 
+  // Fetch UV data from API
   const fetchUvData = async (lat, lng) => {
     try {
       const res = await fetch(`http://localhost:5000/uv?lat=${lat}&lng=${lng}`);
       const data = await res.json();
       setUvData(data.result);
-      console.log("API response:", data.result);
     } catch (err) {
       console.error("Error fetching UV data", err);
+      alert("Failed to fetch UV data. Please try again.");
     }
   };
 
+  // Handle map clicks
   const handleClick = (lat, lng) => {
     setCoords({ lat, lng });
     fetchUvData(lat, lng);
-    console.log(`Latitude: ${lat} and ${lng}`);
   };
 
-    const handleSearch = (e) => {
+  // Handle coordinate search
+  const handleSearch = (e) => {
     e.preventDefault();
     const lat = parseFloat(latInput);
     const lng = parseFloat(lngInput);
@@ -70,26 +73,30 @@ function App() {
 
   return (
     <div className="map-container">
-      {/* Search Bar */}
-      <form className="coordinates-form" onClick={handleSearch}>
- <input
+      {/* User Instructions */}
+      <div className="instructions">
+        <p><strong>Tip:</strong> Click anywhere on the map to get UV index, or enter coordinates below if you know them.</p>
+      </div>
+
+      {/* Search Form */}
+      <form className="coordinates-form" onSubmit={handleSearch}>
+        <input
           type="text"
-          placeholder="Latitude"
+          placeholder="Latitude (e.g. -33.96)"
           value={latInput}
           onChange={(e) => setLatInput(e.target.value)}
-          style={{ width: "80px" }}
         />
         <input
           type="text"
-          placeholder="Longitude"
+          placeholder="Longitude (e.g. 18.41)"
           value={lngInput}
           onChange={(e) => setLngInput(e.target.value)}
-          style={{ width: "80px" }}
         />
         <button type="submit">Search</button>
       </form>
 
-      <MapContainer center={[-28.6135, 24.1260]} zoom={6} className="leaflet-map">
+      {/* Map */}
+      <MapContainer center={[-28.6135, 24.1260]} zoom={5} className="leaflet-map">
         <TileLayer
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
           attribution="&copy; OpenStreetMap contributors"
@@ -99,42 +106,37 @@ function App() {
         {coords && (
           <Marker position={[coords.lat, coords.lng]}>
             <Popup>
-              You clicked at <br /> {coords.lat.toFixed(4)}, {coords.lng.toFixed(4)}
+              Selected Location <br />
+              {coords.lat.toFixed(4)}, {coords.lng.toFixed(4)}
             </Popup>
           </Marker>
         )}
       </MapContainer>
 
+      {/* Coordinates Display */}
       {coords && (
         <div className="coords-display">
           <strong>Coordinates:</strong> {coords.lat.toFixed(4)}, {coords.lng.toFixed(4)}
         </div>
       )}
 
-      {/* API response display */}
+      {/* UV Data Display */}
       {uvData && (
         <div className="API-response">
-          <h4>UV Data:</h4>
+          <h4>UV Information</h4>
           <p><strong>UV Index:</strong> {uvData.uv}</p>
           <p><strong>Max UV:</strong> {uvData.uv_max} at {new Date(uvData.uv_max_time).toLocaleTimeString()}</p>
           <p><strong>UV Time:</strong> {new Date(uvData.uv_time).toLocaleTimeString()}</p>
           <p><strong>Ozone:</strong> {uvData.ozone}</p>
 
-          <h5>Sun Position:</h5>
+          <h5>Sun Position</h5>
           <ul>
             {Object.entries(uvData.sun_info.sun_position).map(([key, value]) => (
               <li key={key}>{key.toUpperCase()}: {value}</li>
             ))}
           </ul>
 
-          <h5>Safe Exposure Times (minutes):</h5>
-          <ul>
-            {Object.entries(uvData.safe_exposure_time).map(([key, value]) => (
-              <li key={key}>{key.toUpperCase()}: {value}</li>
-            ))}
-          </ul>
-
-          <h5>Sun Times:</h5>
+          <h5>Sun Times</h5>
           <ul>
             {Object.entries(uvData.sun_info.sun_times).map(([key, value]) => (
               <li key={key}>{key}: {new Date(value).toLocaleTimeString()}</li>
@@ -142,7 +144,6 @@ function App() {
           </ul>
         </div>
       )}
-
     </div>
   );
 }
