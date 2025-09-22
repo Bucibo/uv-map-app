@@ -3,9 +3,6 @@ import { MapContainer, TileLayer, useMapEvents, Marker, Popup } from "react-leaf
 import "leaflet/dist/leaflet.css";
 import "./App.css";
 
-function App() {
-  const [coords, setCoords] = useState(null);
-
   function LocationMarker({ onClick }) {
     useMapEvents({
       click(e) {
@@ -16,8 +13,24 @@ function App() {
     return null;
   }
 
+function App() {
+  const [coords, setCoords] = useState(null);
+  const [uvData, setUvData] = useState(null);
+
+  const fetchUvData = async (lat, lng) => {
+    try {
+      const res = await fetch(`http://localhost:5000/uv?lat=${lat}&lng=${lng}`);
+      const data = await res.json();
+      setUvData(data.result);
+      console.log("API response:", data.result);
+    } catch (err) {
+      console.error("Error fetching UV data", err);
+    }
+  };
+
   const handleClick = (lat, lng) => {
     setCoords({ lat, lng });
+    fetchUvData(lat, lng);
     console.log(`Latitude: ${lat} and ${lng}`);
   };
 
